@@ -175,9 +175,10 @@ public class API {
         maxFindTxs = configuration.getMaxFindTransactions();
         maxRequestList = configuration.getMaxRequestsList();
         maxGetTrytes = configuration.getMaxGetTrytes();
+        PearlDiver.init(configuration.getExternalPoWLib());
 
         features = Feature.calculateFeatureNames(configuration);
-        
+
         commandRoute = new HashMap<>();
         commandRoute.put(ApiCommand.ADD_NEIGHBORS, addNeighbors());
         commandRoute.put(ApiCommand.ATTACH_TO_TANGLE, attachToTangle());
