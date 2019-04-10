@@ -75,11 +75,11 @@ public class PearlDiver {
      * @return <tt>true</tt> if search completed successfully.
      * the nonce will be written to the end of {@code transactionTrits}
      */
-    public boolean search(final byte[] transactionTrits, final int minWeightMagnitude,
+    public synchronized boolean search(final byte[] transactionTrits, final int minWeightMagnitude,
                           int numberOfThreads) {
         validateParameters(transactionTrits, minWeightMagnitude, numberOfThreads);
         if (isExternal) {
-            return PearlDiver.exlibSearch(transactionTrits, minWeightMagnitude);
+            return PearlDiver.exlibSearch(transactionTrits, minWeightMagnitude, numberOfThreads);
         } else {
             return isearch(transactionTrits, minWeightMagnitude, numberOfThreads);
         }
