@@ -83,6 +83,7 @@ public class PearlDiver {
         } else {
             return isearch(transactionTrits, minWeightMagnitude, numberOfThreads);
         }
+    }
 
     public synchronized boolean isearch(final byte[] transactionTrits, final int minWeightMagnitude,
                                         int numberOfThreads) {
@@ -292,4 +293,3 @@ public class PearlDiver {
             }
         }
     }
-}
