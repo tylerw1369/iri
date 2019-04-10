@@ -79,7 +79,7 @@ public class PearlDiver {
                           int numberOfThreads) {
         validateParameters(transactionTrits, minWeightMagnitude);
         if (isExternal) {
-            return PearlDiver.exlibSearch(transactionTrits, final int minWeightMagnitude, int numberOfThreads);
+            return PearlDiver.exlibSearch(transactionTrits, minWeightMagnitude);
         } else {
             return isearch(transactionTrits, minWeightMagnitude, numberOfThreads);
         }
