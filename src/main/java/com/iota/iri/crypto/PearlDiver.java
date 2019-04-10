@@ -34,7 +34,7 @@ public class PearlDiver {
     
     private static boolean isExternal = false;
 
-     public static void init(String exlibName) {
+    public static void init(String exlibName) {
         try {
             System.loadLibrary(exlibName);
             if (PearlDiver.exlibInit()) {
@@ -83,7 +83,6 @@ public class PearlDiver {
         } else {
             return isearch(transactionTrits, minWeightMagnitude, numberOfThreads);
         }
-    }
 
     public synchronized boolean isearch(final byte[] transactionTrits, final int minWeightMagnitude,
                                         int numberOfThreads) {
