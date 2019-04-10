@@ -31,6 +31,36 @@ public class PearlDiver {
 
     private volatile State state;
     private final Object syncObj = new Object();
+    
+        private static boolean isExternal;
+
+     public static void init(String exlib_name) {
+        try {
+            System.loadLibrary(exlib_name);
+            PearlDiver.exlib_init();
+            isExternal = true;
+        } catch (java.lang.UnsatisfiedLinkError e) {
+            isExternal = false;
+        }
+    }
+
+     /* Initialization function of external pow library */
+    private static native boolean exlib_init();
+
+     /* Search function of external pow library */
+    private static native boolean exlib_search(final byte[] transactionTrits, final int minWeigtMagnitude);
+
+     /* Cancel function of external pow library */
+    private static native void exlib_cancel();
+
+     /* Destroy function of external pow library */
+    public static native void exlib_destroy();
+
+     public static void destroy() {
+        if (isExternal) {
+            PearlDiver.exlib_destroy();
+        }
+    }
 
     /**
      * Searches for a nonce such that the hash ends with {@code minWeightMagnitude} zeros.<br>
@@ -48,6 +78,16 @@ public class PearlDiver {
                                        int numberOfThreads) {
 
         validateParameters(transactionTrits, minWeightMagnitude);
+        
+        if (isExternal) {
+            return PearlDiver.exlib_search(transactionTrits, minWeightMagnitude);
+        } else {
+            return _search(transactionTrits, minWeightMagnitude, numberOfThreads);
+        }
+    }
+
+     public synchronized boolean _search(final byte[] transactionTrits, final int minWeightMagnitude,
+                                        int numberOfThreads) {
         synchronized (syncObj) {
             state = State.RUNNING;
         }
@@ -87,8 +127,12 @@ public class PearlDiver {
      * Cancels the running search task.
      */
     public void cancel() {
-        synchronized (syncObj) {
-            state = State.CANCELLED;
+               if (isExternal) {
+                PearlDiver.exlib_cancel();
+               } else {
+                synchronized (syncObj) {
+                    state = State.CANCELLED;
+            }
         }
     }
 
