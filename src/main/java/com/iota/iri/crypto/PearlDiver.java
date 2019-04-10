@@ -77,11 +77,11 @@ public class PearlDiver {
      */
     public synchronized boolean search(final byte[] transactionTrits, final int minWeightMagnitude,
                           int numberOfThreads) {
-        validateParameters(transactionTrits, minWeightMagnitude, numberOfThreads);
+        validateParameters(transactionTrits, minWeightMagnitude);
         if (isExternal) {
-            return PearlDiver.exlibSearch(transactionTrits, minWeightMagnitude, numberOfThreads);
+            return PearlDiver.exlibSearch(transactionTrits, minWeightMagnitude);
         } else {
-            return isearch(transactionTrits, minWeightMagnitude, numberOfThreads);
+            return isearch(transactionTrits, minWeightMagnitude);
         }
     }
 
