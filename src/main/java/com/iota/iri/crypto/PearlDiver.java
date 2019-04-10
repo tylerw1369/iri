@@ -31,33 +31,33 @@ public class PearlDiver {
 
     private volatile State state;
     private final Object syncObj = new Object();
-    
+
     private static boolean isExternal = false;
 
     public static void init(String exlibName) {
         try {
             System.loadLibrary(exlibName);
             if (PearlDiver.exlibInit()) {
-             isExternal = true;
+                isExternal = true;
             }
         } catch (java.lang.UnsatisfiedLinkError e) {
             /* Do Nothing */
         }
     }
 
-     /* Initialization function of external pow library */
+    /* Initialization function of external pow library */
     private static native boolean exlibInit();
 
-     /* Search function of external pow library */
-    private static native boolean exlibSearch(final byte[] transactionTrits, final int minWeigtMagnitude, int numberOfThreads);
+    /* Search function of external pow library */
+    private static native boolean exlibSearch(final byte[] transactionTrits, final int minWeigtMagnitude);
 
-     /* Cancel function of external pow library */
+    /* Cancel function of external pow library */
     private static native void exlibCancel();
 
-     /* Destroy function of external pow library */
+    /* Destroy function of external pow library */
     public static native void exlibDestroy();
 
-     public static void destroy() {
+    public static void destroy() {
         if (isExternal) {
             PearlDiver.exlibDestroy();
         }
@@ -75,7 +75,7 @@ public class PearlDiver {
      * @return <tt>true</tt> if search completed successfully.
      * the nonce will be written to the end of {@code transactionTrits}
      */
-    public synchronized boolean search(final byte[] transactionTrits, final int minWeightMagnitude,
+    public boolean search(final byte[] transactionTrits, final int minWeightMagnitude,
                           int numberOfThreads) {
         validateParameters(transactionTrits, minWeightMagnitude);
         if (isExternal) {
@@ -126,11 +126,11 @@ public class PearlDiver {
      * Cancels the running search task.
      */
     public void cancel() {
-               if (isExternal) {
-                PearlDiver.exlibCancel();
-               } else {
-                synchronized (syncObj) {
-                    state = State.CANCELLED;
+        if (isExternal) {
+            PearlDiver.exlibCancel();
+        } else {
+            synchronized (syncObj) {
+                state = State.CANCELLED;
             }
         }
     }
@@ -140,6 +140,7 @@ public class PearlDiver {
             throw new RuntimeException(
                     "Invalid transaction trits length: " + transactionTrits.length);
         }
+
         if (minWeightMagnitude < 0 || minWeightMagnitude > CURL_HASH_LENGTH) {
             throw new RuntimeException("Invalid min weight magnitude: " + minWeightMagnitude);
         }
