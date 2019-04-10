@@ -22,7 +22,6 @@
         <checkstyle-version>3.0.0</checkstyle-version>
         <undertow.version>1.4.26.Final</undertow.version>
         <jacoco.version>0.7.9</jacoco.version>
-        <version.number>1.7.0-RELEASE</version.number>
         <!-- Setting the checkstyle.config.location here will make checkstyle use this file in every maven target.
              This variable will be load by checkstyle plugin automatically. It is more global than setting the
              configLocation attribute on every maven goal. -->
