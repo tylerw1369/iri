@@ -176,6 +176,7 @@ public class API {
         maxFindTxs = configuration.getMaxFindTransactions();
         maxRequestList = configuration.getMaxRequestsList();
         maxGetTrytes = configuration.getMaxGetTrytes();
+        PearlDiver.init(instance.configuration.getExternalPoWLib());
 
         features = Feature.calculateFeatureNames(configuration);
         
@@ -1457,6 +1458,7 @@ public class API {
         tipSelExecService.shutdownNow();
         if (connector != null) {
             connector.stop();
+            PearlDiver.destroy();
         }
     }
 
