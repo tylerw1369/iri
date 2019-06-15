@@ -22,6 +22,7 @@ import com.iota.iri.service.tipselection.TipSelector;
 import com.iota.iri.service.tipselection.impl.WalkValidatorImpl;
 import com.iota.iri.utils.Converter;
 import com.iota.iri.utils.IotaIOUtils;
+import com.iota.iri.utils.IotaUtils;
 import com.iota.iri.utils.MapIdentityManager;
 import io.undertow.Undertow;
 import io.undertow.security.api.AuthenticationMechanism;
@@ -135,6 +136,7 @@ public class API {
         maxGetTrytes = configuration.getMaxGetTrytes();
         maxBodyLength = configuration.getMaxBodyLength();
         testNet = configuration.isTestnet();
+        PearlDiver.init(instance.configuration.getExternalPoWLib());
 
         features = Feature.calculateFeatureNames(instance.configuration);
     }
@@ -348,7 +350,7 @@ public class API {
             // Is this command allowed to be run from this request address?
             // We check the remote limit API configuration.
             if (instance.configuration.getRemoteLimitApi().contains(command) &&
-                    !sourceAddress.getAddress().isLoopbackAddress()) {
+                    !instance.configuration.getRemoteTrustedApiHosts().contains(sourceAddress.getAddress())) {
                 return AccessLimitedResponse.create("COMMAND " + command + " is not available on this node");
             }
 
@@ -884,8 +886,8 @@ public class API {
         MilestoneViewModel milestone = MilestoneViewModel.first(instance.tangle);
         
         return GetNodeInfoResponse.create(
-                name, 
-                IRI.VERSION,
+                name,
+                IotaUtils.getIriVersion(),
                 Runtime.getRuntime().availableProcessors(),
                 Runtime.getRuntime().freeMemory(),
                 System.getProperty("java.version"),
@@ -1666,6 +1668,7 @@ public class API {
     public void shutDown() {
         if (server != null) {
             server.stop();
+            PearlDiver.destroy();
         }
     }
 
