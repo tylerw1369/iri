@@ -41,6 +41,7 @@ public abstract class BaseIotaConfig implements IotaConfig {
     protected int maxGetTrytes = Defaults.MAX_GET_TRYTES;
     protected int maxBodyLength = Defaults.MAX_BODY_LENGTH;
     protected String remoteAuth = Defaults.REMOTE_AUTH;
+    protected String pathPoWLib = Defaults.PATH_POW_LIB;
     
     //We don't have a REMOTE config but we have a remote flag. We must add a field for JCommander
     private boolean remote;
@@ -93,11 +94,12 @@ public abstract class BaseIotaConfig implements IotaConfig {
     //Tip Selection
     protected int maxDepth = Defaults.MAX_DEPTH;
     protected double alpha = Defaults.ALPHA;
+    protected int tipSelectionTimeoutSec = Defaults.TIP_SELECTION_TIMEOUT_SEC;
     private int maxAnalyzedTransactions = Defaults.MAX_ANALYZED_TXS;
-    
+
     //Tip Solidification
     protected boolean tipSolidifierEnabled = Defaults.TIP_SOLIDIFIER_ENABLED;
-    
+
     //PearlDiver
     protected int powThreads = Defaults.POW_THREADS;
 
@@ -280,6 +282,17 @@ public abstract class BaseIotaConfig implements IotaConfig {
     @Override
     public int getUdpReceiverPort() {
         return udpReceiverPort;
+    }
+
+    @JsonProperty
+    @Parameter(names = {"--pearldiver-exlib"}, description = APIConfig.Descriptions.EXTERNAL_POW_LIB)
+    protected void setExternalPoWLib(String pathPoWLib) {
+        this.pathPoWLib = pathPoWLib;
+    }
+
+    @Override
+    public String getExternalPoWLib() {
+        return pathPoWLib;
     }
 
     @JsonProperty
@@ -546,8 +559,8 @@ public abstract class BaseIotaConfig implements IotaConfig {
             SnapshotConfig.Descriptions.LOCAL_SNAPSHOTS_PRUNING_DELAY)
     protected void setLocalSnapshotsPruningDelay(int localSnapshotsPruningDelay) {
         if (localSnapshotsPruningDelay < Defaults.LOCAL_SNAPSHOTS_PRUNING_DELAY_MIN) {
-            throw new ParameterException("LOCAL_SNAPSHOTS_PRUNING_DELAY should be at least " 
-                    + Defaults.LOCAL_SNAPSHOTS_PRUNING_DELAY_MIN 
+            throw new ParameterException("LOCAL_SNAPSHOTS_PRUNING_DELAY should be at least "
+                    + Defaults.LOCAL_SNAPSHOTS_PRUNING_DELAY_MIN
                     + "(found " + localSnapshotsPruningDelay +")");
         }
 
@@ -827,19 +840,30 @@ public abstract class BaseIotaConfig implements IotaConfig {
     protected void setAlpha(double alpha) {
         this.alpha = alpha;
     }
-    
+
+    @Override
+    public int getTipSelectionTimeoutSec() {
+        return tipSelectionTimeoutSec;
+    }
+
+    @JsonProperty
+    @Parameter(names = "--tip-selection-timeout-sec", description = TipSelConfig.Descriptions.TIP_SELECTION_TIMEOUT_SEC)
+    protected void setTipSelectionTimeoutSec(int tipSelectionTimeoutSec) {
+        this.tipSelectionTimeoutSec = tipSelectionTimeoutSec;
+    }
+
     @Override
     public boolean isTipSolidifierEnabled() {
         return tipSolidifierEnabled;
     }
 
     @JsonProperty
-    @Parameter(names = "--tip-solidifier", description = SolidificationConfig.Descriptions.TIP_SOLIDIFIER, 
+    @Parameter(names = "--tip-solidifier", description = SolidificationConfig.Descriptions.TIP_SOLIDIFIER,
         arity = 1)
     protected void setTipSolidifierEnabled(boolean tipSolidifierEnabled) {
         this.tipSolidifierEnabled = tipSolidifierEnabled;
     }
-    
+
     @Override
     public int getBelowMaxDepthTransactionLimit() {
         return maxAnalyzedTransactions;
@@ -878,6 +902,7 @@ public abstract class BaseIotaConfig implements IotaConfig {
         int MAX_GET_TRYTES = 10_000;
         int MAX_BODY_LENGTH = 1_000_000;
         String REMOTE_AUTH = "";
+        String PATH_POW_LIB = "";
 
         //Network
         int UDP_RECEIVER_PORT = 14600;
@@ -924,9 +949,10 @@ public abstract class BaseIotaConfig implements IotaConfig {
         //TipSel
         int MAX_DEPTH = 15;
         double ALPHA = 0.001d;
-        
+        int TIP_SELECTION_TIMEOUT_SEC = 60;
+
         //Tip solidification
-        boolean TIP_SOLIDIFIER_ENABLED = true;
+        boolean TIP_SOLIDIFIER_ENABLED = false;
 
         //PearlDiver
         int POW_THREADS = 0;
@@ -941,8 +967,8 @@ public abstract class BaseIotaConfig implements IotaConfig {
 
         //Snapshot
         boolean LOCAL_SNAPSHOTS_ENABLED = true;
-        boolean LOCAL_SNAPSHOTS_PRUNING_ENABLED = true;
-        
+        boolean LOCAL_SNAPSHOTS_PRUNING_ENABLED = false;
+
         int LOCAL_SNAPSHOTS_PRUNING_DELAY = 40000;
         int LOCAL_SNAPSHOTS_PRUNING_DELAY_MIN = 10000;
         int LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 10;
@@ -951,7 +977,7 @@ public abstract class BaseIotaConfig implements IotaConfig {
         int LOCAL_SNAPSHOTS_DEPTH_MIN = 100;
         String SPENT_ADDRESSES_DB_PATH = "spent-addresses-db";
         String SPENT_ADDRESSES_DB_LOG_PATH = "spent-addresses-log";
-        
+
         String LOCAL_SNAPSHOTS_BASE_PATH = "mainnet";
         String SNAPSHOT_FILE = "/snapshotMainnet.txt";
         String SNAPSHOT_SIG_FILE = "/snapshotMainnet.sig";
