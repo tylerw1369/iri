@@ -2,8 +2,6 @@ package com.iota.iri.crypto;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Proof of Work calculator.
@@ -23,7 +21,6 @@ public class PearlDiver {
         COMPLETED
     }
 
-    private static final Logger log = LoggerFactory.getLogger(PearlDiver.class);
     private static final int TRANSACTION_LENGTH = 8019;
 
     private static final int CURL_HASH_LENGTH = 243;
@@ -39,21 +36,12 @@ public class PearlDiver {
 
     public static void init(String exlibName) {
         try {
-            try {
-                System.loadLibrary(exlibName);
-            } catch (java.lang.UnsatisfiedLinkError e) {
-                if (exlibName.equals("dcurl")) {
-                    Dcurl dcurl = new Dcurl();
-                    dcurl.loadLibraryFromJar();
-                }
-            }
+            System.loadLibrary(exlibName);
             if (PearlDiver.exlibInit()) {
                 isExternal = true;
             }
         } catch (java.lang.UnsatisfiedLinkError e) {
-            log.info("No external library for {}", PearlDiver.class.getSimpleName());
-        } catch (java.lang.NullPointerException e) {
-            log.info("The external library name is an empty string");
+            /* Do Nothing */
         }
     }
 
@@ -61,7 +49,7 @@ public class PearlDiver {
     private static native boolean exlibInit();
 
     /* Search function of external pow library */
-    private static native boolean exlibSearch(final byte[] transactionTrits, final int minWeigtMagnitude, int numberOfThreads);
+    private static native boolean exlibSearch(final byte[] transactionTrits, final int minWeigtMagnitude);
 
     /* Cancel function of external pow library */
     private static native void exlibCancel();
@@ -87,11 +75,11 @@ public class PearlDiver {
      * @return <tt>true</tt> if search completed successfully.
      * the nonce will be written to the end of {@code transactionTrits}
      */
-    public boolean search(final byte[] transactionTrits, final int minWeightMagnitude,
+    public synchronized boolean search(final byte[] transactionTrits, final int minWeightMagnitude,
                           int numberOfThreads) {
         validateParameters(transactionTrits, minWeightMagnitude);
         if (isExternal) {
-            return PearlDiver.exlibSearch(transactionTrits, minWeightMagnitude, numberOfThreads);
+            return PearlDiver.exlibSearch(transactionTrits, minWeightMagnitude);
         } else {
             return isearch(transactionTrits, minWeightMagnitude, numberOfThreads);
         }
