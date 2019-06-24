@@ -2,7 +2,6 @@ package com.iota.iri.crypto;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.dltcollab.Dcurl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
