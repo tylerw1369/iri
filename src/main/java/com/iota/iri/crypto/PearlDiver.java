@@ -128,7 +128,7 @@ public class PearlDiver {
      */
     public void cancel() {
         if (isExternal) {
-            state = State.CANCELLED;	            PearlDiver.exlibCancel();
+            PearlDiver.exlibCancel();
         } else {
             synchronized (syncObj) {
                 state = State.CANCELLED;
