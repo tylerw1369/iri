@@ -279,6 +279,11 @@ public abstract class BaseIotaConfig implements IotaConfig {
         this.remoteAuth = remoteAuth;
     }
 
+    @Override
+    public int getUdpReceiverPort() {
+        return udpReceiverPort;
+    }
+
     @JsonProperty
     @Parameter(names = {"--pearldiver-exlib"}, description = APIConfig.Descriptions.EXTERNAL_POW_LIB)
     protected void setExternalPoWLib(String pathPoWLib) {
@@ -288,11 +293,6 @@ public abstract class BaseIotaConfig implements IotaConfig {
     @Override
     public String getExternalPoWLib() {
         return pathPoWLib;
-    }
-
-    @Override
-    public int getUdpReceiverPort() {
-        return udpReceiverPort;
     }
 
     @JsonProperty
