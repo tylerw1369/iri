@@ -42,6 +42,8 @@ public class PearlDiver {
             }
         } catch (java.lang.UnsatisfiedLinkError e) {
             /* Do Nothing */
+        } catch (java.lang.NullPointerException e) {
+            /* Do Nothing */
         }
     }
 
